@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Polls.Models.Election>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ElectionName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExtraInformation)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ElectionStarts)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ElectionEnds)
+                </th>
+                
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ElectionName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExtraInformation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ElectionStarts)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ElectionEnds)
+            </td>
+            
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ElectionId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ElectionId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ElectionId }) |
+                @Html.ActionLink("Publish", "Publish", new { id = item.ElectionId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

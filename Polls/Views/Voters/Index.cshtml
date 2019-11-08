@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Polls.Models.Voter>
+
+@{
+    ViewData["Title"] = "Index";
+    List<Election> elections = Model.Select(v => v.Election).Distinct().ToList();
+}
+
+
+<h2>
+    Voters
+</h2>
+
+@foreach(Election election in elections)
+{
+    <h2>@election.ElectionName</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.HasVoted)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WhenIStartedVoting)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WhenIFinished)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WillVoteAgainBecauseOfTie)
+                </th>
+                <th>
+                    Voter's name
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Where(v => v.ElectionId == election.ElectionId))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HasVoted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WhenIStartedVoting)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WhenIFinished)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WillVoteAgainBecauseOfTie)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                    </td>
+                    <td>
+                        @if (election.Tie)
+                        {
+                            if (item.WillVoteAgainBecauseOfTie)
+                            {
+                                <p>User will vote again</p>
+                            }
+                            else
+                            {
+                                <form asp-action="Edit" asp-route-id="@item.VoterId">
+                                    <input type="submit" value="Grant power" class="btn btn-success" />
+                                </form>
+                            }
+
+                        }
+                        else
+                        {
+                            <p>No action required.</p>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+

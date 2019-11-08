@@ -1,0 +1,39 @@
+﻿@model Polls.Models.Candidate
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>CandidateViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-id="@Model.CandidateId" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CandidateId"/>
+            <input type="hidden" asp-for="ElectionId"/>
+            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="MyImageUrl"/>
+            <input type="hidden" asp-for="TotalNumberOfVotes"/>
+            <img src="~/@Model.MyImageUrl" class="img-responsive"/>
+            <div class="form-group">
+                <label for="File" id="File" class="control-label">Change candidate's image</label>
+                <input name="File" type="file" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="MyPromise" class="control-label"></label>
+                <input asp-for="MyPromise" class="form-control" />
+                <span asp-validation-for="MyPromise" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

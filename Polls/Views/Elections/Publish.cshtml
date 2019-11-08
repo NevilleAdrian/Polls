@@ -1,0 +1,80 @@
+﻿@model Polls.Models.Election
+
+@{
+    ViewData["Title"] = "Publish";
+    bool HasStarted = DateTime.Now >= Model.ElectionStarts;
+    bool HasEnded = DateTime.Now >= Model.ElectionEnds;
+    bool InProgress = HasStarted && !HasEnded;
+}
+
+<div class="row">
+    @if (!string.IsNullOrEmpty(Model.ElectionPublishedMessage))
+    {
+        <strong>Message has been broadcast.</strong>
+        <p>@Model.ElectionPublishedMessage</p>
+    }
+    <div class="col-md-12">
+        <h1>@Model.ElectionName</h1>
+        <p>@Model.ExtraInformation</p>
+        <p>Election status: @(InProgress ? "Election is ongoing" : !HasStarted ? $"Election will start on {Model.ElectionStarts.ToLongDateString()}" : "Election has ended")</p>
+
+        @if (Model.Candidates != null)
+        {
+            <h2>List of candidates</h2>
+        <ol>
+            @foreach (var item in Model.Candidates)
+            {
+             
+            <li>Candidate Name: @item.User.Name <br/> Total Votes: @item.TotalNumberOfVotes</li>
+
+            }
+        </ol>
+                
+        }
+        else
+        {
+            <p class="nice-boder">No candidates for this election yet</p>
+        }
+         
+        @if (Model.Voters != null)
+        {
+                <h2>List of voters</h2>
+                <ol>
+                    @foreach (var item in Model.Voters)
+                    {
+                        
+                      <li>@item.User.Name</li>
+                        
+                    }
+                </ol>
+                
+            
+        }
+        else
+        {
+            <p>No voters for this election yet</p>
+        }
+    </div>
+</div>
+
+<div>
+    @if (Model.Completed)
+    {
+        <p>This election is complete</p>
+    }
+    else if (Model.Tie)
+    {
+        <p class="nice-boder">"@Model.ElectionName".<br />@Model.ElectionPublishedMessage</p>
+        <form asp-action="PublishResult" asp-route-id="@Model.ElectionId">
+            <button type="submit" class="btn btn-primary">Publish</button>
+        </form>
+    }
+    else
+    {
+        <form asp-action="PublishResult" asp-route-id="@Model.ElectionId">
+            <button type="submit" class="btn btn-primary">Publish</button>
+        </form>
+    }
+
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,51 @@
+﻿@model Polls.Models.Election
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Election</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ElectionId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ElectionId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ElectionName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ElectionName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ExtraInformation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ExtraInformation)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ElectionStarts)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ElectionStarts)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ElectionEnds)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ElectionEnds)
+        </dd>
+        
+    </dl>
+    
+    <form asp-action="DeleteConfirmed" asp-route-id="@Model.ElectionId">
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

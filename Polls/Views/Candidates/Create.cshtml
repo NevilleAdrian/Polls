@@ -1,0 +1,43 @@
+﻿@model Polls.Models.CandidateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Add a candidate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="File" class="control-label">Candidate's Image</label>
+                <input asp-for="File" class="form-control" />
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MyPromise" class="control-label">Candidate's promise</label>
+                <textarea asp-for="MyPromise" class="form-control"></textarea>
+                <span asp-validation-for="MyPromise" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label">Select a User</label>
+                @Html.DropDownListFor(c => c.UserId, ViewBag.Users as SelectList, "Select user", new { @class = "form=control d-block" })
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ElectionId" class="control-label">Select an election</label>
+                @Html.DropDownListFor(c => c.ElectionId, ViewBag.ElectionName as SelectList, "Select election", new { @class = "form=control d-block" })
+                <span asp-validation-for="ElectionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

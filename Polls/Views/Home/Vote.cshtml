@@ -1,0 +1,95 @@
+﻿@model Polls.Models.Election
+
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@{
+    ViewData["Title"] = "Vote";
+    string userId = null;
+    bool HasStarted = DateTime.Now >= Model.ElectionStarts;
+    bool HasEnded = DateTime.Now >= Model.ElectionEnds;
+    bool InProgress = HasStarted && !HasEnded;
+    Voter votee = null;
+    string voterId = null;
+    if (signInManager.IsSignedIn(User))
+    {
+        ApplicationUser user = await userManager.GetUserAsync(User);
+        userId = user.Id;
+        votee = Model.Voters.Where(v => v.UserId == userId && v.ElectionId == Model.ElectionId).FirstOrDefault();
+        if(votee != null)
+        {
+            voterId = votee.VoterId;
+        }
+    }
+}
+@if (signInManager.IsSignedIn(User))
+{
+    <h2>Vote for @Model.ElectionName</h2>
+
+    @if (Model != null)
+    {
+        if (InProgress)
+        {
+            <div class="row">
+                @if (Model.Candidates != null && Model.Candidates.Count() > 0)
+                {
+                    @foreach (Candidate candidate in Model.Candidates)
+                    {
+                        <div class="col-md-3">
+                            <div class="col-md-12">
+                                <img src="~/@candidate.MyImageUrl" alt="@candidate.User.Name" class="fixed-height fixed-wdth img-rounded img-responsive" />
+                            </div>
+                            <div class="col-md-12">
+                                <h4>@candidate.User.Name</h4>
+                                <p>
+                                    @candidate.MyPromise
+                                </p>
+                            </div>
+
+                            <div class="col-md-12">
+                                <form asp-action="Create" asp-controller="Voters">
+                                    <input type="hidden" name="UserId" value="@userId" />
+                                    <input type="hidden" name="VoterId" value="@voterId" />
+                                    <input type="hidden" name="ElectionId" value="@Model.ElectionId" />
+                                    <input type="hidden" name="WhenIStartedVoting" value="@DateTime.Now" />
+                                    <input type="hidden" name="CandidateId" value="@candidate.CandidateId" />
+                                    <input type="submit" value="Vote" class="btn btn-default" />
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <p>Please contact admins. Election has started and no candidates yet...</p>
+
+                    </div>
+                }
+
+            </div>
+        }
+        else if (!HasStarted)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p>This election has not started yet. It would start by @Model.ElectionStarts.ToLongDateString() at @Model.ElectionStarts.ToLongTimeString()</p>
+                </div>
+            </div>
+        }
+        else if (HasEnded)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <p>This election has ended. It ended at @Model.ElectionEnds.ToLongDateString() at @Model.ElectionEnds.ToLongTimeString()</p>
+                    <p>Kindly wait for the results to be published.</p>
+                </div>
+            </div>
+        }
+    }
+
+}
+else
+{
+    <p class="mt-4">Please <a asp-action="Login" asp-controller="Account">sign in</a> to see available elections</p>
+
+}

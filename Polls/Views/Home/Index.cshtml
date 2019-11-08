@@ -1,0 +1,144 @@
+﻿@model IEnumerable<Polls.Models.Election>
+
+@inject UserManager<ApplicationUser> userManager
+@inject SignInManager<ApplicationUser> signInManager
+@{
+    ViewData["Title"] = "Home Page";
+    bool canVote = false;
+    string voterId = null;
+    Voter votee = null;
+
+}
+
+@if (signInManager.IsSignedIn(User))
+{
+    @if (Model != null)
+    {
+        @foreach (Election election in Model)
+        {
+            bool HasStarted = DateTime.Now >= election.ElectionStarts;
+            bool HasEnded = DateTime.Now >= election.ElectionEnds;
+            bool InProgress = HasStarted && !HasEnded;
+            if (InProgress)
+            {
+                ApplicationUser user = await userManager.GetUserAsync(User);
+                if (election.Voters != null && election.Voters.Count() > 0)
+                {
+                    votee = election.Voters.Where(v => v.UserId == user.Id && v.ElectionId == election.ElectionId).FirstOrDefault();
+                    if (votee != null)
+                    {
+                        voterId = votee.VoterId;
+                        canVote = election.Voters.Any(v => v.VoterId == voterId && !v.HasVoted || v.WillVoteAgainBecauseOfTie);
+                    }
+                    else
+                    {
+                        canVote = true;
+                    }
+
+                }
+                else
+                {
+                    canVote = true;
+                }
+                if (canVote && !election.Completed)
+                {
+
+                    <div class="nice-boder">
+                        @if (votee != null)
+                        {
+                            @if (votee.WillVoteAgainBecauseOfTie)
+                            {
+                                <p>You have been granted the power to vote again because of a tie</p>
+                            }
+                        }
+
+                        <p class="mt-4">@election.ElectionName</p>
+                        <a asp-action="Vote" asp-route-id="@election.ElectionId" class="btn btn-default">Vote</a>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="nice-boder">
+                        @if (election.Completed)
+                        {
+                            <p>The result for <em>@election.ElectionName</em> election is out.</p>
+                            <p>This is the summary: </p>
+                            <p>@election.ElectionPublishedMessage</p>
+                        }
+                        else if (election.Tie)
+                        {
+                            <p>Thank you for voting in the election for "@election.ElectionName".<br />@election.ElectionPublishedMessage</p>
+
+                        }
+                        else
+                        {
+                            <p>Thank you for voting in the election for "@election.ElectionName". You will see the winner when we publish the election results.</p>
+                        }
+                    </div>
+
+                }
+
+
+
+            }
+            else
+            {
+                if (!HasStarted)
+                {
+                    @if (election.Completed)
+                    {
+                        <p>The result for <em>@election.ElectionName</em> election is out.</p>
+                        <p>This is the summary: </p>
+                        <p>@election.ElectionPublishedMessage</p>
+                    }
+                    else if (election.Tie)
+                    {
+                        <p>Thank you for voting in the election for "@election.ElectionName".<br />@election.ElectionPublishedMessage</p>
+
+                    }
+                    else
+                    {
+                        <p>Thank you for voting in the election for "@election.ElectionName". You will see the winner when we publish the election results.</p>
+                    }
+                }
+                else if (HasEnded)
+                {
+                    @if (election.Completed)
+                    {
+                        <div class="nice-boder">
+                            <p>The result for <em>@election.ElectionName</em> election is out.</p>
+                            <p>This is the summary: </p>
+                            <p>@election.ElectionPublishedMessage</p>
+                        </div>
+
+                    }
+                    else if (election.Tie)
+                    {
+                        <p class="nice-boder">Thank you for voting in the election for "@election.ElectionName".<br />@election.ElectionPublishedMessage</p>
+
+                    }
+                    else
+                    {
+                        <div class="nice-boder">
+                            <p>The election on "@election.ElectionName" has ended, it ended on @election.ElectionStarts.ToLongDateString() at @election.ElectionStarts.ToLongTimeString()</p>
+                            <p>Kindly wait for the result to be published.</p>
+                        </div>
+                    }
+
+
+                }
+
+            }
+
+        }
+    }
+    else
+    {
+        <p class="nice-boder">There are no elections yet.</p>
+    }
+}
+else
+{
+    <p class="mt-4">Please <a asp-action="Login" asp-controller="Account">sign in</a> to see available elections</p>
+}

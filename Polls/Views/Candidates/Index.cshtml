@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Polls.Models.Candidate>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Candidate's Image
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalNumberOfVotes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MyPromise)
+            </th>
+            <th>
+                Candidate Name
+            </th>
+            <th>
+                Election Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <img src="~/@item.MyImageUrl" class="img-responsive" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalNumberOfVotes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MyPromise)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Election.ElectionName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CandidateId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CandidateId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CandidateId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

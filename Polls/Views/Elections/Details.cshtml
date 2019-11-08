@@ -1,0 +1,51 @@
+﻿@model Polls.Models.Election
+
+@{
+    ViewData["Title"] = "Details";
+    bool HasStarted = DateTime.Now >= Model.ElectionStarts;
+    bool HasEnded = DateTime.Now >= Model.ElectionEnds;
+    bool InProgress = HasStarted && !HasEnded;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>@Model.ElectionName</h1>
+        <p>@Model.ExtraInformation</p>
+        <p>@(HasStarted ? "Election is ongoing" : (DateTime.Now < Model.ElectionStarts) ? $"Election will start on {Model.ElectionStarts.ToLongDateString()}" : "Election has ended")</p>
+        
+        @*@if (Model.Candidates != null)
+        {
+            <ul>
+                @foreach (var item in Model.Candidates)
+                {
+                    <li>@item.User.Name</li>
+                    <li>@item.TotalNumberOfVotes</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No candidates for this election yet</p>
+        }
+
+        @if (Model.Voters != null)
+        {
+            <ul>
+                @foreach (var item in Model.Voters)
+                {
+                    <li>@item.User.Name</li>
+                    <li>@(item.HasVoted ? "Has voted" : "Still to vote")</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No voters for this election yet</p>
+        }*@
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ElectionId }) |
+    <a asp-action="Index">Back to List</a>
+</div>
